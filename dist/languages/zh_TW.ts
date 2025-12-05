@@ -1438,7 +1438,7 @@ When a guest attempts to open the controller applet, it is immediately closed.</
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="434"/>
         <source>Taiwanese</source>
-        <translation>台灣中文</translation>
+        <translation>正體中文(中國台灣)</translation>
     </message>
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="435"/>
@@ -1504,7 +1504,7 @@ When a guest attempts to open the controller applet, it is immediately closed.</
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="450"/>
         <source>Taiwan</source>
-        <translation>台灣</translation>
+        <translation>中國台灣</translation>
     </message>
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="456"/>
@@ -1596,7 +1596,7 @@ When a guest attempts to open the controller applet, it is immediately closed.</
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="477"/>
         <source>Hongkong</source>
-        <translation>香港</translation>
+        <translation>中國香港</translation>
     </message>
     <message>
         <location filename="../../src/citron/configuration/shared_translation.cpp" line="478"/>
