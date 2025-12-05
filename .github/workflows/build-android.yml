@@ -62,17 +62,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify Submodules
+      - name: Initialize Submodules
         run: |
-          git submodule status
-          if [ ! -d "externals/enet" ] || [ -z "$(ls -A externals/enet)" ]; then
-            echo "Submodules not properly initialized, retrying..."
-            git submodule update --init --recursive
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          # Verify critical submodules
+          if [ ! -d "externals/enet/include" ]; then
+            echo "ERROR: enet submodule failed to initialize"
+            exit 1
           fi
+          echo "All submodules initialized successfully"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4

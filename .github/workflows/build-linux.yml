@@ -73,17 +73,19 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
-      - name: Verify Submodules
+      - name: Initialize Submodules
         run: |
           git config --global --add safe.directory "*"
-          git submodule status
-          if [ ! -f "externals/vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
-            echo "Submodules not properly initialized, retrying..."
-            git submodule update --init --recursive
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          # Verify critical submodules
+          if [ ! -d "externals/enet/include" ]; then
+            echo "ERROR: enet submodule failed to initialize"
+            exit 1
           fi
+          echo "All submodules initialized successfully"
 
       - name: Install Dependencies
         run: |

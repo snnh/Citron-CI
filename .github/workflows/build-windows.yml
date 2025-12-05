@@ -67,17 +67,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify Submodules
+
+      - name: Initialize Submodules
         shell: bash
         run: |
-          git submodule status
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          # Verify critical submodules
           if [ ! -f "externals/vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
-            echo "Submodules not properly initialized, retrying..."
-            git submodule update --init --recursive
+            echo "ERROR: vcpkg submodule failed to initialize"
+            exit 1
           fi
+          if [ ! -d "externals/enet/include" ]; then
+            echo "ERROR: enet submodule failed to initialize"
+            exit 1
+          fi
+          echo "All submodules initialized successfully"
+
       - name: Install Vulkan SDK
         shell: pwsh
         run: |
