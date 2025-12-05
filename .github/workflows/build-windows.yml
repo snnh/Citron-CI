@@ -104,6 +104,7 @@ jobs:
             -DCITRON_ENABLE_LTO=ON ^
             -DCITRON_USE_BUNDLED_QT=ON ^
             -DENABLE_QT6=ON ^
+            -DENABLE_QT_TRANSLATION=ON ^
             -DCITRON_TESTS=OFF ^
             -DUSE_DISCORD_PRESENCE=ON ^
             -DENABLE_WEB_SERVICE=ON ^

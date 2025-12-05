@@ -128,6 +128,7 @@ jobs:
             -DCITRON_USE_BUNDLED_FFMPEG=OFF \
             -DCITRON_USE_QT_MULTIMEDIA=OFF \
             -DCITRON_USE_QT_WEB_ENGINE=OFF \
+            -DENABLE_QT_TRANSLATION=ON \
             -DCITRON_TESTS=OFF \
             -DCMAKE_C_FLAGS="-O3 -march=x86-64-v2 -mtune=generic" \
             -DCMAKE_CXX_FLAGS="-I${QT_PRIVATE_INCLUDE_DIR} -O3 -march=x86-64-v2 -mtune=generic -Wno-error"

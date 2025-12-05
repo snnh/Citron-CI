@@ -8,14 +8,14 @@ This directory contains GitHub Actions workflows for building Citron emulator ac
 - **Trigger**: Manual dispatch only
 - **Platform**: Windows x64
 - **Build System**: CMake + Visual Studio 2022
-- **Output**: ZIP archive with Qt6 GUI
+- **Output**: ZIP archive with Qt6 GUI (Multi-language enabled)
 - **Release Tag**: `nightly-windows`
 
 ### 🐧 Linux Build (`build-linux.yml`)
 - **Trigger**: Manual dispatch only
 - **Platform**: Linux x86_64 (CachyOS container)
 - **Build System**: CMake + Ninja
-- **Output**: AppImage (portable) + tar.gz (binaries)
+- **Output**: AppImage (portable) + tar.gz (binaries, Multi-language enabled)
 - **Release Tag**: `nightly-linux`
 
 ### 📱 Android Build (`build-android.yml`)
