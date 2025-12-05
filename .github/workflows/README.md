@@ -38,15 +38,14 @@ Each workflow maintains a separate version file:
 - `LATEST_VERSION_LINUX`
 - `LATEST_VERSION_ANDROID`
 
-These files track the last successfully built commit hash from the upstream Citron repository.
+These files track the last successfully built commit hash from this repository.
 
-## Upstream Source
-All builds pull from: `https://git.citron-emu.org/Citron/Emulator.git`
-Branch: `fix/audio-biquad-filter-metroid-prime-4`
+## Source Code
+All builds use the source code from this repository (`https://github.com/snnh/citron-ci`)
 
 ## Build Process
 
-1. **Version Check**: Compare upstream commit hash with last built version
+1. **Version Check**: Compare current commit hash with last built version
 2. **Build**: Compile Citron for the target platform
 3. **Package**: Create distribution packages
 4. **Release**: Create/update nightly release with artifacts

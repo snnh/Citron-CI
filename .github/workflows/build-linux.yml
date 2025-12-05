@@ -13,17 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_build: ${{ steps.compare.outputs.should_build }}
-      new_hash: ${{ steps.upstream.outputs.hash_short }}
-      new_hash_full: ${{ steps.upstream.outputs.hash_full }}
+      new_hash: ${{ steps.current.outputs.hash_short }}
+      new_hash_full: ${{ steps.current.outputs.hash_full }}
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
-      - name: Get upstream commit hash
-        id: upstream
+      - name: Get current commit hash
+        id: current
         run: |
-          REPO_URL="https://git.citron-emu.org/Citron/Emulator.git"
-          BRANCH="fix/audio-biquad-filter-metroid-prime-4"
-          FULL_HASH=$(git ls-remote "$REPO_URL" "refs/heads/$BRANCH" | cut -f1)
+          FULL_HASH=$(git rev-parse HEAD)
           SHORT_HASH=$(echo "$FULL_HASH" | cut -c1-7)
           echo "hash_short=$SHORT_HASH" >> $GITHUB_OUTPUT
           echo "hash_full=$FULL_HASH" >> $GITHUB_OUTPUT
@@ -46,7 +44,7 @@ jobs:
       - name: Compare versions
         id: compare
         run: |
-          if [ "${{ steps.upstream.outputs.hash_short }}" != "${{ steps.last_built.outputs.last_hash }}" ]; then
+          if [ "${{ steps.current.outputs.hash_short }}" != "${{ steps.last_built.outputs.last_hash }}" ]; then
             echo "should_build=true" >> $GITHUB_OUTPUT
           elif [ "${{ steps.release_check.outputs.exists }}" != "true" ]; then
             echo "should_build=true" >> $GITHUB_OUTPUT
@@ -68,6 +66,10 @@ jobs:
     timeout-minutes: 120
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Install Dependencies
         run: |
           pacman -Syu --noconfirm
@@ -90,21 +92,14 @@ jobs:
           echo 'fi' >> /usr/local/bin/shasum
           chmod +x /usr/local/bin/shasum
 
-      - name: Clone Citron Source
-        run: |
-          git clone --recursive -b fix/audio-biquad-filter-metroid-prime-4 \
-            "https://git.citron-emu.org/Citron/Emulator.git" citron
-
       - name: Get Nightly Version
         id: version
-        working-directory: ./citron
         run: |
           git fetch --tags
           VERSION=$(git rev-parse --short HEAD)
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Configure CMake
-        working-directory: ./citron
         run: |
           # Find Qt private include directory
           HEADER_PATH=$(pacman -Ql qt6-base | grep 'qpa/qplatformnativeinterface.h$' | awk '{print $2}')
@@ -134,11 +129,10 @@ jobs:
             -DCMAKE_CXX_FLAGS="-I${QT_PRIVATE_INCLUDE_DIR} -O3 -march=x86-64-v2 -mtune=generic -Wno-error"
 
       - name: Build Citron
-        working-directory: ./citron/build
+        working-directory: ./build
         run: ninja
 
       - name: Build AppImage
-        working-directory: ./citron
         run: |
           export APPIMAGE_EXTRACT_AND_RUN=1
           export ARCH=x86_64
@@ -147,15 +141,14 @@ jobs:
           ./AppImage-build-local.sh || echo "AppImage build completed with warnings"
 
       - name: Package Linux Build
-        working-directory: ./citron
         run: |
-          mkdir -p ../dist
+          mkdir -p dist
           if [ -f citron.AppImage ]; then
-            mv citron.AppImage ../dist/Citron-linux-nightly-${{ steps.version.outputs.VERSION }}-x86_64.AppImage
+            mv citron.AppImage dist/Citron-linux-nightly-${{ steps.version.outputs.VERSION }}-x86_64.AppImage
           fi
 
           # Also create tarball of binaries
-          tar -czf ../dist/Citron-linux-nightly-${{ steps.version.outputs.VERSION }}-x86_64.tar.gz -C build/bin .
+          tar -czf dist/Citron-linux-nightly-${{ steps.version.outputs.VERSION }}-x86_64.tar.gz -C build/bin .
 
       - name: Upload Linux Build
         uses: actions/upload-artifact@v4
@@ -197,9 +190,9 @@ jobs:
           prerelease: true
           files: "Citron-linux-*"
           body: |
-            **Citron Upstream Commit:** [`${{ needs.check-version.outputs.new_hash }}`](https://git.citron-emu.org/Citron/Emulator/commit/${{ needs.check-version.outputs.new_hash_full }})
+            **Citron Commit:** [`${{ needs.check-version.outputs.new_hash }}`](https://github.com/${{ github.repository }}/commit/${{ needs.check-version.outputs.new_hash_full }})
 
-            This build is based on the latest Citron emulator source code from the upstream repository.
+            This build is based on the Citron emulator source code from this repository.
 
             **Build Details:**
             - Platform: Linux (x86_64)
