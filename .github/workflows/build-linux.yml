@@ -102,9 +102,14 @@ jobs:
             ["externals/cpp-jwt"]="https://github.com/arun11299/cpp-jwt.git"
             ["externals/libusb/libusb"]="https://github.com/libusb/libusb.git"
             ["externals/simpleini"]="https://github.com/brofield/simpleini.git"
-            ["externals/oaknut"]="https://github.com/merryhime/oaknut.git"
+            ["externals/oaknut"]="https://github.com/yuzu-mirror/oaknut.git"
             ["externals/Vulkan-Utility-Libraries"]="https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git"
+            ["externals/ffmpeg/ffmpeg"]="https://github.com/FFmpeg/FFmpeg.git"
+            ["externals/nx_tzdb/tzdb_to_nx"]="https://github.com/lat9nq/tzdb_to_nx.git"
           )
+
+          # Create directory structures
+          mkdir -p externals/ffmpeg externals/nx_tzdb
 
           for path in "${!submodules[@]}"; do
             url="${submodules[$path]}"
