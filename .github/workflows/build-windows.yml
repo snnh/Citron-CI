@@ -76,10 +76,14 @@ jobs:
           # Parse .gitmodules and clone each submodule
           echo "Cloning submodules from .gitmodules..."
 
-          # Clone vcpkg
+          # Clone vcpkg (needs full history for baseline)
           if [ ! -f "externals/vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
             rm -rf externals/vcpkg
-            git clone --depth 1 https://github.com/microsoft/vcpkg.git externals/vcpkg
+            git clone https://github.com/microsoft/vcpkg.git externals/vcpkg
+            cd externals/vcpkg
+            # Checkout the baseline commit specified in vcpkg.json
+            git checkout bc994510d2eb11aac7b43b03f67a7751d5bfe0e4
+            cd ../..
           fi
 
           # Clone enet
@@ -136,6 +140,13 @@ jobs:
           fi
 
           echo "Submodule cloning completed"
+
+      - name: Bootstrap vcpkg
+        shell: pwsh
+        run: |
+          cd externals/vcpkg
+          .\bootstrap-vcpkg.bat
+          cd ../..
 
       - name: Install Vulkan SDK
         shell: pwsh
